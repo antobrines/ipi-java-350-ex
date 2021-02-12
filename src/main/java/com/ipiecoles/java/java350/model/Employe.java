@@ -93,7 +93,7 @@ case SATURDAY:var = var + 1;
      */
     //Matricule, performance, date d'embauche, temps partiel, prime
     public Double getPrimeAnnuelle(){
-        //Calcule de la prime d'ancienneté
+        //Calcule de la prime d'anciennetée
         Double primeAnciennete = Entreprise.PRIME_ANCIENNETE * this.getNombreAnneeAnciennete();
         Double prime;
         //Prime du manager (matricule commençant par M) : Prime annuelle de base multipliée par l'indice prime manager
