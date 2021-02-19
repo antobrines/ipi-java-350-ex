@@ -24,7 +24,7 @@ class EmployeTest {
     }
 
     @Test
-    void testAugmenterSalaireNull() {
+    void testAugmenterSalaireNull() throws EmployeException{
         //Given
         Employe employe = new Employe("Cena", "John", "T12345", LocalDate.now(), null, 1,1.0);
         Double pourcentage = 10d;
@@ -36,7 +36,7 @@ class EmployeTest {
     }
 
     @Test
-    void testAugmenterSalaireNegatif() {
+    void testAugmenterSalaireNegatif() throws EmployeException {
         //Given
         Employe employe = new Employe("Cena", "John", "T12345", LocalDate.now(), 1500d, 1,1.0);
         Double pourcentage = -5d;
@@ -134,12 +134,11 @@ class EmployeTest {
         Assertions.assertThat(prime).isEqualTo(1000d);
     }
 
-
     @ParameterizedTest
     @CsvSource({
             "'C12345', 1.0, 0, 1, 1000.0",
             "'M12345', 1.0, 0, 1, 1700.0",
-            "'C12345', 1.0, 2, 2, 2500.0"
+            ", 1.0, 2, 2, 2500.0"
     })
     void testGetPrimeAnnuelle(String matricule, Double tempsPartiel, Integer nbAnneeAnciennete, Integer performance, Double primeCalculee) {
         //Given

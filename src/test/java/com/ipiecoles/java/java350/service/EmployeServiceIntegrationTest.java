@@ -33,7 +33,7 @@ public class EmployeServiceIntegrationTest {
     }
 
     @Test
-    public void integrationEmbaucheEmploye() throws EmployeException {
+    void testIntegrationEmbaucheEmploye() throws EmployeException {
         //Given
         employeRepository.save(new Employe("Doe", "John", "T12345", LocalDate.now(), Entreprise.SALAIRE_BASE, 1, 1.0));
         String nom = "Doe";
@@ -57,7 +57,7 @@ public class EmployeServiceIntegrationTest {
     }
 
     @Test
-    void testCalculPerformanceCommercial() throws EmployeException {
+    void testIntegrationCalculPerformanceCommercial() throws EmployeException {
         //Given
         String nom = "Cena";
         String prenom = "John";
@@ -74,6 +74,23 @@ public class EmployeServiceIntegrationTest {
         //Then
         Employe employe = employeRepository.findByMatricule(matricule);
         Assertions.assertEquals(1, (int) employe.getPerformance());
+    }
+
+    @Test
+    void testCalculPerformanceCommercialWithAvgInf() throws EmployeException {
+        //Given
+        employeService.embaucheEmploye("Mysterio","Rey", Poste.COMMERCIAL, NiveauEtude.LICENCE,1.0);
+        employeService.embaucheEmploye("Cena","John", Poste.COMMERCIAL, NiveauEtude.LICENCE,1.0);
+
+        //When
+        employeService.calculPerformanceCommercial("C00001",1201l,1000L);
+        employeService.calculPerformanceCommercial("C00001",1201l,1000L);
+        employeService.calculPerformanceCommercial("C00002",1201l,1000L);
+        List<Employe> employes = employeRepository.findAll();
+        Employe employe =  employes.get(employes.size() - 1);
+
+        //Then
+        Assertions.assertEquals(5, employe.getPerformance());
     }
 
 }

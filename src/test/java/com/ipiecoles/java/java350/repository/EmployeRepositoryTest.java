@@ -67,6 +67,19 @@ class EmployeRepositoryTest {
     }
 
     @Test
+    void testFindLastMatriculeMatriculeIfMatriculeIsNull(){
+        //Given
+        Employe employe = new Employe("Doe", "John", null, LocalDate.now(), 1400d, 1, 1d);
+        employeRepository.save(employe);
+
+        //When
+        String employeRep = employeRepository.findLastMatricule();
+
+        //Then
+        Assertions.assertThat(employeRep).isNull();
+    }
+
+    @Test
     void testAvgPerformanceWhereMatriculeStartsWith() {
         //Given
         Employe e0 = new Employe("Cena", "John", "C12345", LocalDate.now(), Entreprise.SALAIRE_BASE, 4, 1.0);

@@ -40,7 +40,7 @@ class EmployeServiceTest {
     }
 
     @Test
-    void embaucheEmploye0Employe() throws EmployeException {
+    void testEmbaucheEmploye0Employe() throws EmployeException {
         //Given
         String nom = "Doe";
         String prenom = "John";
@@ -56,11 +56,17 @@ class EmployeServiceTest {
         //Then
         ArgumentCaptor<Employe> employeArgumentCaptor = ArgumentCaptor.forClass(Employe.class);
         verify(employeRepository, times(1)).save(employeArgumentCaptor.capture());
-        Assertions.assertThat(employeArgumentCaptor.getValue().getMatricule()).isEqualTo("M00001");
+        Employe employe = employeArgumentCaptor.getValue();
+        Assertions.assertThat(employe.getNom()).isEqualTo(nom);
+        Assertions.assertThat(employe.getPrenom()).isEqualTo(prenom);
+        Assertions.assertThat(employe.getSalaire()).isEqualTo(1064.85);
+        Assertions.assertThat(employe.getTempsPartiel()).isEqualTo(0.5);
+        Assertions.assertThat(employe.getDateEmbauche()).isEqualTo(LocalDate.now());
+        Assertions.assertThat(employe.getMatricule()).isEqualTo("M00001");
     }
 
     @Test
-    void embaucheEmployeXEmployes() throws EmployeException {
+    void testEmbaucheEmployeXEmployes() throws EmployeException {
         //Given
         when(employeRepository.findLastMatricule()).thenReturn("45678");
         when(employeRepository.findByMatricule(Mockito.anyString())).thenReturn(null);
@@ -123,7 +129,6 @@ class EmployeServiceTest {
             Assertions.fail("Aurait du lancer une exception");
         } catch (Exception e){
             //Then
-            //Vérifie que l'exception levée est de type EmployeException
             Assertions.assertThat(e).isInstanceOf(EntityExistsException.class);
             Assertions.assertThat(e.getMessage()).isEqualTo("L'employé de matricule M00001 existe déjà en BDD");
         }
@@ -137,10 +142,10 @@ class EmployeServiceTest {
             " 1051 , 3 ",
             " 1201 , 6 ",
     })
-    void testCalculPerformanceCommercial(long chiffreAffaire,Integer performanceAttendu) throws EmployeException {
+    void testCalculPerformanceCommercial(Long chiffreAffaire, Integer performanceAttendu) throws EmployeException {
         //Given
         String matricule = "C12345";
-        long objectif= 1000L;
+        Long objectif = 1000L;
         Employe employe = new Employe("Cena","John",matricule,LocalDate.now(), Entreprise.SALAIRE_BASE,1,1d);
         when(employeRepository.findByMatricule(matricule)).thenReturn(employe);
         when(employeRepository.avgPerformanceWhereMatriculeStartsWith("C")).thenReturn(1d);
@@ -150,7 +155,6 @@ class EmployeServiceTest {
         employeService.calculPerformanceCommercial(matricule,chiffreAffaire,objectif);
 
         //Then
-
         ArgumentCaptor<Employe> employeCaptor = ArgumentCaptor.forClass(Employe.class);
         Mockito.verify(employeRepository).save(employeCaptor.capture());
         Employe employeWithNewPerformance = employeCaptor.getValue();
