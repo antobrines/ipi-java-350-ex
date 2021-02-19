@@ -1,6 +1,8 @@
 package com.ipiecoles.java.java350.model;
 
 import com.ipiecoles.java.java350.exception.EmployeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -31,6 +33,8 @@ public class Employe {
     private Integer performance = Entreprise.PERFORMANCE_BASE;
 
     private Double tempsPartiel = 1.0;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Employe.class);
 
     public Employe() {
     }
@@ -76,35 +80,29 @@ public class Employe {
      * au prorata du temps d'activité
      */
     public Integer getNbRtt(LocalDate dateReference) {
-        int nbJoursAnnee = dateReference.isLeapYear() ? 366 : 365;
-        int nbSamediDimanche = 104;
+        int nbDaysInCurrentYear = dateReference.isLeapYear() ? 366 : 365;
+        int nbOfweekenddays = 104;
+
         switch (LocalDate.of(dateReference.getYear(), 1, 1).getDayOfWeek()) {
-            case THURSDAY:
-                if (dateReference.isLeapYear()) {
-                    nbSamediDimanche = nbSamediDimanche + 1;
-                }
-                break;
             case FRIDAY:
                 if (dateReference.isLeapYear()) {
-                    nbSamediDimanche = nbSamediDimanche + 2;
-                }
-                else {
-                    nbSamediDimanche = nbSamediDimanche + 1;
+                    nbOfweekenddays += 2;
+                } else {
+                    nbOfweekenddays += 1;
                 }
                 break;
             case SATURDAY:
-                nbSamediDimanche = nbSamediDimanche + 1;
+                nbOfweekenddays += 1;
+                break;
+            default:
                 break;
         }
-        int nbJoursFeriesSemaine = (int) Entreprise.joursFeries(dateReference).stream().filter(localDate ->
-                localDate.getDayOfWeek().getValue() <= DayOfWeek.FRIDAY.getValue()).count();
-        return (int) Math.ceil((
-                nbJoursAnnee
-                        - Entreprise.NB_JOURS_MAX_FORFAIT
-                        - nbSamediDimanche
-                        - Entreprise.NB_CONGES_BASE
-                        - nbJoursFeriesSemaine
-        ) * tempsPartiel);
+
+        long nbJourFerieNotWeekend = Entreprise.joursFeries(dateReference).stream()
+                .filter(localDate -> localDate.getDayOfWeek().getValue() <= DayOfWeek.FRIDAY.getValue()).count();
+        Double test = (nbDaysInCurrentYear - Entreprise.NB_JOURS_MAX_FORFAIT - nbOfweekenddays - nbJourFerieNotWeekend
+                - Entreprise.NB_CONGES_BASE) * tempsPartiel;
+        return test.intValue();
     }
 
     /**

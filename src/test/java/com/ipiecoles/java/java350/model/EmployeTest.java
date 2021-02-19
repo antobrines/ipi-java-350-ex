@@ -47,6 +47,24 @@ class EmployeTest {
             }).isInstanceOf(EmployeException.class).hasMessage("Augmente le salaire, ne le diminue pas !");
     }
 
+    @ParameterizedTest
+    @CsvSource({
+            "'2019-01-01', 8",
+            "'2020-01-01', 10",
+            "'2021-01-01', 10",
+            "'2022-01-01', 10"
+    })
+    void testNbRTT(LocalDate date, Integer nbDeRTTAttendu) {
+        //Given
+        Employe employe = new Employe("Cena", "John", "M12345", LocalDate.now(), 1400d, 1, 1d);
+
+        //When
+        Integer nbRtt = employe.getNbRtt(date);
+
+        //Then
+        Assertions.assertThat(nbRtt).isEqualTo(nbDeRTTAttendu);
+    }
+
     @Test
     void testNbAnneeAncienneteNow() {
         //Given
