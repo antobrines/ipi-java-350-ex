@@ -52,7 +52,8 @@ class EmployeTest {
             "'2019-01-01', 8",
             "'2020-01-01', 10",
             "'2021-01-01', 10",
-            "'2022-01-01', 10"
+            "'2022-01-01', 10",
+            "'2032-01-01', 12"
     })
     void testNbRTT(LocalDate date, Integer nbDeRTTAttendu) {
         //Given
