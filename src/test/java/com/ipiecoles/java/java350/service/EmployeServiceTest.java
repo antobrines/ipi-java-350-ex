@@ -167,7 +167,7 @@ class EmployeServiceTest {
             ", 50000, 88000, Le matricule ne peut être null et doit commencer par un C !",
             "C12345, 50000, 88000, Le matricule C12345 n'existe pas !",
     })
-    public void calculPerformanceCommercialExceptions(String matricule, Long caTraite, Long objectifCa, String exceptionMessage) {
+    void calculPerformanceCommercialExceptions(String matricule, Long caTraite, Long objectifCa, String exceptionMessage) {
         //Given
         try {
             //When
@@ -175,9 +175,7 @@ class EmployeServiceTest {
             Assertions.fail("Aurait du lancer une exception");
         } catch (Exception e) {
             //Then
-            //Vérifie que l'exception levée est de type EmployeException
             Assertions.assertThat(e).isInstanceOf(EmployeException.class);
-            //Vérifie le contenu du message
             Assertions.assertThat(e.getMessage()).isEqualTo(exceptionMessage);
         }
     }
