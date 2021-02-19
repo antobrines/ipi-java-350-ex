@@ -2,6 +2,7 @@ package com.ipiecoles.java.java350.repository;
 
 
 import com.ipiecoles.java.java350.model.Employe;
+import com.ipiecoles.java.java350.model.Entreprise;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -63,6 +64,38 @@ class EmployeRepositoryTest {
 
         //Then
         Assertions.assertThat(lastMatricule).isEqualTo("67890");
+    }
+
+    @Test
+    void testAvgPerformanceWhereMatriculeStartsWith() {
+        //Given
+        Employe e0 = new Employe("Cena", "John", "C12345", LocalDate.now(), Entreprise.SALAIRE_BASE, 4, 1.0);
+        Employe e1 = new Employe("Mysterio", "Rey", "C23456", LocalDate.now(), Entreprise.SALAIRE_BASE, 2, 1.0);
+        Employe e2 = new Employe("Orton", "Randy", "C34567", LocalDate.now(), Entreprise.SALAIRE_BASE, 6, 1.0);
+        Employe e3 = new Employe("Johnson", "Dwayne", "M12345", LocalDate.now(), Entreprise.SALAIRE_BASE, 6, 1.0);
+        employeRepository.save(e0);
+        employeRepository.save(e1);
+        employeRepository.save(e2);
+        employeRepository.save(e3);
+
+        //When
+        Double avgPerformance = employeRepository.avgPerformanceWhereMatriculeStartsWith("C");
+
+        //Then
+        Assertions.assertThat(avgPerformance).isEqualTo(4d);
+    }
+
+    @Test
+    void testAvgPerformanceWhereNoAvg() {
+        //Given
+        Employe e1 = new Employe("Dwayne", "Johnson", "M12345", LocalDate.now(), Entreprise.SALAIRE_BASE, 6, 1.0);
+        employeRepository.save(e1);
+
+        //When
+        Double avgPerformance = employeRepository.avgPerformanceWhereMatriculeStartsWith("C");
+
+        //Then
+        Assertions.assertThat(avgPerformance).isNull();
     }
 
 }

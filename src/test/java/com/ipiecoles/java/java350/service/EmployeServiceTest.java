@@ -138,7 +138,7 @@ class EmployeServiceTest {
             " 1201 , 6 ",
     })
     void testCalculPerformanceCommercial(long chiffreAffaire,Integer performanceAttendu) throws EmployeException {
-        //GIVEN
+        //Given
         String matricule = "C12345";
         long objectif= 1000L;
         Employe employe = new Employe("Cena","John",matricule,LocalDate.now(), Entreprise.SALAIRE_BASE,1,1d);
@@ -146,10 +146,10 @@ class EmployeServiceTest {
         when(employeRepository.avgPerformanceWhereMatriculeStartsWith("C")).thenReturn(1d);
         when(employeRepository.save(Mockito.any(Employe.class))).thenAnswer(AdditionalAnswers.returnsFirstArg());
 
-        //WHEN
+        //When
         employeService.calculPerformanceCommercial(matricule,chiffreAffaire,objectif);
 
-        //THEN
+        //Then
 
         ArgumentCaptor<Employe> employeCaptor = ArgumentCaptor.forClass(Employe.class);
         Mockito.verify(employeRepository).save(employeCaptor.capture());
