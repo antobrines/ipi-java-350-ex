@@ -40,13 +40,21 @@ class EmployeServiceTest {
     @Test
     void embaucheEmploye0Employe() throws EmployeException {
         //Given
+        String nom = "Doe";
+        String prenom = "John";
+        Poste poste = Poste.MANAGER;
+        NiveauEtude niveauEtude = NiveauEtude.MASTER;
+        Double tempsPartiel = 0.5;
         when(employeRepository.findLastMatricule()).thenReturn(null);
-        when(employeRepository.findByMatricule("C00001")).thenReturn(null);
+        when(employeRepository.findByMatricule("M00001")).thenReturn(null);
 
         //When
-        employeService.embaucheEmploye("Doe", "john", Poste.COMMERCIAL, NiveauEtude.LICENCE, 1.0);
+        employeService.embaucheEmploye(nom, prenom, poste, niveauEtude, tempsPartiel);
 
         //Then
+        ArgumentCaptor<Employe> employeArgumentCaptor = ArgumentCaptor.forClass(Employe.class);
+        verify(employeRepository, times(1)).save(employeArgumentCaptor.capture());
+        Assertions.assertThat(employeArgumentCaptor.getValue().getMatricule()).isEqualTo("M00001");
     }
 
     @Test

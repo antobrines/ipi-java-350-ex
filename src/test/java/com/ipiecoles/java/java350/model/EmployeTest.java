@@ -11,7 +11,7 @@ import java.time.LocalDate;
 class EmployeTest {
 
     @Test
-    public void testAugmenterSalaireXPourcent() throws EmployeException {
+    void testAugmenterSalaireXPourcent() throws EmployeException {
         //Given
         Employe employe = new Employe("Cena", "John", "T12345", LocalDate.now(), 1500d, 1,1.0);
         Double pourcentage = 5d;
@@ -24,7 +24,7 @@ class EmployeTest {
     }
 
     @Test
-    public void testAugmenterSalaireNull() {
+    void testAugmenterSalaireNull() {
         //Given
         Employe employe = new Employe("Cena", "John", "T12345", LocalDate.now(), null, 1,1.0);
         Double pourcentage = 10d;
@@ -36,7 +36,7 @@ class EmployeTest {
     }
 
     @Test
-    public void testAugmenterSalaireNegatif() {
+    void testAugmenterSalaireNegatif() {
         //Given
         Employe employe = new Employe("Cena", "John", "T12345", LocalDate.now(), 1500d, 1,1.0);
         Double pourcentage = -5d;
