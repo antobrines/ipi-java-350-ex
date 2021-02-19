@@ -34,8 +34,6 @@ public class Employe {
 
     private Double tempsPartiel = 1.0;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Employe.class);
-
     public Employe() {
     }
 
