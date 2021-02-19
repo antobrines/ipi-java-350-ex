@@ -11,6 +11,8 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.*;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -127,6 +129,57 @@ class EmployeServiceTest {
         }
     }
 
+    @ParameterizedTest
+    @CsvSource({
+            " 0 , 1 ",
+            " 850 , 1 ",
+            " 1050 , 1 ",
+            " 1051 , 3 ",
+            " 1201 , 6 ",
+    })
+    void testCalculPerformanceCommercial(long chiffreAffaire,Integer performanceAttendu) throws EmployeException {
+        //GIVEN
+        String matricule = "C12345";
+        long objectif= 1000L;
+        Employe employe = new Employe("Cena","John",matricule,LocalDate.now(), Entreprise.SALAIRE_BASE,1,1d);
+        when(employeRepository.findByMatricule(matricule)).thenReturn(employe);
+        when(employeRepository.avgPerformanceWhereMatriculeStartsWith("C")).thenReturn(1d);
+        when(employeRepository.save(Mockito.any(Employe.class))).thenAnswer(AdditionalAnswers.returnsFirstArg());
 
+        //WHEN
+        employeService.calculPerformanceCommercial(matricule,chiffreAffaire,objectif);
+
+        //THEN
+
+        ArgumentCaptor<Employe> employeCaptor = ArgumentCaptor.forClass(Employe.class);
+        Mockito.verify(employeRepository).save(employeCaptor.capture());
+        Employe employeWithNewPerformance = employeCaptor.getValue();
+        Assertions.assertThat(employeWithNewPerformance.getPerformance()).isEqualTo(performanceAttendu);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "C12345, , 88000, Le chiffre d'affaire traité ne peut être négatif ou null !",
+            "C12345, -50000, 88000, Le chiffre d'affaire traité ne peut être négatif ou null !",
+            "C12345, 50000, , L'objectif de chiffre d'affaire ne peut être négatif ou null !",
+            "C12345, 50000, -88000, L'objectif de chiffre d'affaire ne peut être négatif ou null !",
+            "M12345, 50000, 88000, Le matricule ne peut être null et doit commencer par un C !",
+            ", 50000, 88000, Le matricule ne peut être null et doit commencer par un C !",
+            "C12345, 50000, 88000, Le matricule C12345 n'existe pas !",
+    })
+    public void calculPerformanceCommercialExceptions(String matricule, Long caTraite, Long objectifCa, String exceptionMessage) {
+        //Given
+        try {
+            //When
+            employeService.calculPerformanceCommercial(matricule, caTraite, objectifCa);
+            Assertions.fail("Aurait du lancer une exception");
+        } catch (Exception e) {
+            //Then
+            //Vérifie que l'exception levée est de type EmployeException
+            Assertions.assertThat(e).isInstanceOf(EmployeException.class);
+            //Vérifie le contenu du message
+            Assertions.assertThat(e.getMessage()).isEqualTo(exceptionMessage);
+        }
+    }
 
 }
