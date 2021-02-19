@@ -1,5 +1,7 @@
 package com.ipiecoles.java.java350.model;
 
+import com.ipiecoles.java.java350.exception.EmployeException;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -117,7 +119,6 @@ public class Employe {
      *
      * @return la prime annuelle de l'employé en Euros et cents
      */
-    //Matricule, performance, date d'embauche, temps partiel, prime
     public Double getPrimeAnnuelle(){
         //Calcule de la prime d'anciennetée
         Double primeAnciennete = Entreprise.PRIME_ANCIENNETE * this.getNombreAnneeAnciennete();
@@ -137,11 +138,25 @@ public class Employe {
             prime = Entreprise.primeAnnuelleBase() * (this.performance + Entreprise.INDICE_PRIME_BASE) + primeAnciennete;
         }
         //Au pro rata du temps partiel.
-        return Math.round(prime * this.tempsPartiel * 100)/100.0;
+        return Math.round(prime * this.tempsPartiel * 100)/100d;
     }
 
-    //Augmenter salaire
-    //public void augmenterSalaire(double pourcentage){}
+    /**
+     *
+     * @param pourcentage
+     * @throws EmployeException
+     */
+    public void augmenterSalaire(double pourcentage)throws EmployeException {
+        if(this.salaire == null){
+            throw new EmployeException("Le salaire doit être différent de null !");
+        }
+
+        if(pourcentage < 0){
+            throw new EmployeException("Augmente le salaire, ne le diminue pas !");
+        }
+
+        this.salaire = Math.round(this.salaire) * (1 + pourcentage / 100);
+    }
 
     public Long getId() {
         return id;
