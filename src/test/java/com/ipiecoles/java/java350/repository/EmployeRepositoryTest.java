@@ -127,7 +127,7 @@ class EmployeRepositoryTest {
         Double moyenne = employeRepository.avgPerformanceWhereMatriculeStartsWith("C");
 
         //Then
-        Assertions.assertThat(moyenne).isEqualTo(0);
+        Assertions.assertThat(moyenne).isZero();
     }
 
 }
