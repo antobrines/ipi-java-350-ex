@@ -123,7 +123,7 @@ class EmployeTest {
         //Given
         Employe employe = new Employe();
         employe.setMatricule("C12345");
-        employe.setTempsPartiel(1.0);
+        employe.setTempsPartiel(1d);
         employe.setDateEmbauche(LocalDate.now());
         employe.setPerformance(Entreprise.PERFORMANCE_BASE);
 
