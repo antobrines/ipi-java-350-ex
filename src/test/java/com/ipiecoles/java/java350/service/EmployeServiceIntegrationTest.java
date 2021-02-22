@@ -73,7 +73,7 @@ public class EmployeServiceIntegrationTest {
 
         //Then
         Employe employe = employeRepository.findByMatricule(matricule);
-        Assertions.assertEquals(1, (int) employe.getPerformance());
+        Assertions.assertEquals(1, employe.getPerformance());
     }
 
     @Test
