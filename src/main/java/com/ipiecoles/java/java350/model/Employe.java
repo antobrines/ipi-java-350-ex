@@ -77,18 +77,23 @@ public class Employe {
      */
     public Integer getNbRtt(LocalDate dateReference) {
         int nbDaysInCurrentYear = dateReference.isLeapYear() ? 366 : 365;
-        int nbOfweekenddays = 104;
+        int nbOfweekendDays = 104;
 
         switch (LocalDate.of(dateReference.getYear(), 1, 1).getDayOfWeek()) {
+            case THURSDAY:
+                if (dateReference.isLeapYear()) {
+                    nbOfweekendDays = nbOfweekendDays + 1;
+                }
+                break;
             case FRIDAY:
                 if (dateReference.isLeapYear()) {
-                    nbOfweekenddays += 2;
+                    nbOfweekendDays += 2;
                 } else {
-                    nbOfweekenddays += 1;
+                    nbOfweekendDays += 1;
                 }
                 break;
             case SATURDAY:
-                nbOfweekenddays += 1;
+                nbOfweekendDays += 1;
                 break;
             default:
                 break;
@@ -96,7 +101,7 @@ public class Employe {
 
         long nbJourFerieNotWeekend = Entreprise.joursFeries(dateReference).stream()
                 .filter(localDate -> localDate.getDayOfWeek().getValue() <= DayOfWeek.FRIDAY.getValue()).count();
-        Double test = (nbDaysInCurrentYear - Entreprise.NB_JOURS_MAX_FORFAIT - nbOfweekenddays - nbJourFerieNotWeekend
+        Double test = (nbDaysInCurrentYear - Entreprise.NB_JOURS_MAX_FORFAIT - nbOfweekendDays - nbJourFerieNotWeekend
                 - Entreprise.NB_CONGES_BASE) * tempsPartiel;
         return test.intValue();
     }
@@ -136,8 +141,10 @@ public class Employe {
     }
 
     /**
-     *
-     * @param pourcentage
+     * Méthode permettant d'augmenter le salaire d'un employé (en pourcentage)
+     * - Le salaire doit être différent de null sinon EmployeException
+     * - On doit augmenter le salaire et pas le diminuer sinon EmployeException
+     * @param pourcentage pourcentage de l'augmentation de l'employé
      * @throws EmployeException
      */
     public void augmenterSalaire(double pourcentage)throws EmployeException {
