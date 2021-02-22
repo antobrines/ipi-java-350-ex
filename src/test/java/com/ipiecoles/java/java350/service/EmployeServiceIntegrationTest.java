@@ -18,7 +18,7 @@ import java.util.List;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class EmployeServiceIntegrationTest {
+class EmployeServiceIntegrationTest {
 
     @Autowired
     EmployeService employeService;
@@ -33,7 +33,7 @@ public class EmployeServiceIntegrationTest {
     }
 
     @Test
-    public void integrationEmbaucheEmploye() throws EmployeException {
+    void testIntegrationEmbaucheEmploye() throws EmployeException {
         //Given
         employeRepository.save(new Employe("Doe", "John", "T12345", LocalDate.now(), Entreprise.SALAIRE_BASE, 1, 1.0));
         String nom = "Doe";
@@ -54,6 +54,43 @@ public class EmployeServiceIntegrationTest {
         Assertions.assertEquals("T12346", employe.getMatricule());
         Assertions.assertEquals(1.0, employe.getTempsPartiel().doubleValue());
         Assertions.assertEquals(1825.46, employe.getSalaire().doubleValue());
+    }
+
+    @Test
+    void testIntegrationCalculPerformanceCommercial() throws EmployeException {
+        //Given
+        String nom = "Cena";
+        String prenom = "John";
+        String matricule = "C12345";
+        LocalDate dateEmbauche = LocalDate.now();
+        Double salaire = 2300d;
+        Integer performance = 2;
+        Double tempsPartiel = 1d;
+        employeRepository.save(new Employe(nom, prenom, matricule, dateEmbauche, salaire, performance, tempsPartiel));
+
+        //When
+        employeService.calculPerformanceCommercial(matricule, 2000L, 10000L);
+
+        //Then
+        Employe employe = employeRepository.findByMatricule(matricule);
+        Assertions.assertEquals(1, employe.getPerformance());
+    }
+
+    @Test
+    void testCalculPerformanceCommercialWithAvgInf() throws EmployeException {
+        //Given
+        employeService.embaucheEmploye("Mysterio","Rey", Poste.COMMERCIAL, NiveauEtude.LICENCE,1.0);
+        employeService.embaucheEmploye("Cena","John", Poste.COMMERCIAL, NiveauEtude.LICENCE,1.0);
+
+        //When
+        employeService.calculPerformanceCommercial("C00001",1201l,1000L);
+        employeService.calculPerformanceCommercial("C00001",1201l,1000L);
+        employeService.calculPerformanceCommercial("C00002",1201l,1000L);
+        List<Employe> employes = employeRepository.findAll();
+        Employe employe =  employes.get(employes.size() - 1);
+
+        //Then
+        Assertions.assertEquals(5, employe.getPerformance());
     }
 
 }

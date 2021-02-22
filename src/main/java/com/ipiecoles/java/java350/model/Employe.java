@@ -1,5 +1,7 @@
 package com.ipiecoles.java.java350.model;
 
+import com.ipiecoles.java.java350.exception.EmployeException;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -59,20 +61,49 @@ public class Employe {
         return getNbRtt(LocalDate.now());
     }
 
-    public Integer getNbRtt(LocalDate d){
-        int i1 = d.isLeapYear() ? 365 : 366;
-        int var = 104;
-        switch (LocalDate.of(d.getYear(),1,1).getDayOfWeek()){
-        case THURSDAY: if(d.isLeapYear()) var =  var + 1; break;
-        case FRIDAY:
-        if(d.isLeapYear()) var =  var + 2;
-        else var =  var + 1;
-case SATURDAY:var = var + 1;
-                    break;
+    /**
+     * Méthode permettant de calculer le nombre de jour de RTT dans l'année (au pro-rata du taux d'activité de l'employé)
+     * selon la formule :
+     * Nb jours RTT =
+     * Nombre de jours dans l'année
+     * - Nombre de jours travaillés dans l'année en plein temps
+     * - Nombre de samedi et dimanche dans l'année
+     * - Nombre de jours fériés ne tombant pas le week-end
+     * - Nombre de congés payés
+     *
+     * @param dateReference la date à laquelle on va calculer le nombre de RTT pour l'année
+     * @return Nombre de jours de RTT pour l'employé l'année de la date de référence
+     * au prorata du temps d'activité
+     */
+    public Integer getNbRtt(LocalDate dateReference) {
+        int nbDaysInCurrentYear = dateReference.isLeapYear() ? 366 : 365;
+        int nbOfweekendDays = 104;
+
+        switch (LocalDate.of(dateReference.getYear(), 1, 1).getDayOfWeek()) {
+            case THURSDAY:
+                if (dateReference.isLeapYear()) {
+                    nbOfweekendDays = nbOfweekendDays + 1;
+                }
+                break;
+            case FRIDAY:
+                if (dateReference.isLeapYear()) {
+                    nbOfweekendDays += 2;
+                } else {
+                    nbOfweekendDays += 1;
+                }
+                break;
+            case SATURDAY:
+                nbOfweekendDays += 1;
+                break;
+            default:
+                break;
         }
-        int monInt = (int) Entreprise.joursFeries(d).stream().filter(localDate ->
-                localDate.getDayOfWeek().getValue() <= DayOfWeek.FRIDAY.getValue()).count();
-        return (int) Math.ceil((i1 - Entreprise.NB_JOURS_MAX_FORFAIT - var - Entreprise.NB_CONGES_BASE - monInt) * tempsPartiel);
+
+        long nbJourFerieNotWeekend = Entreprise.joursFeries(dateReference).stream()
+                .filter(localDate -> localDate.getDayOfWeek().getValue() <= DayOfWeek.FRIDAY.getValue()).count();
+        Double test = (nbDaysInCurrentYear - Entreprise.NB_JOURS_MAX_FORFAIT - nbOfweekendDays - nbJourFerieNotWeekend
+                - Entreprise.NB_CONGES_BASE) * tempsPartiel;
+        return test.intValue();
     }
 
     /**
@@ -87,9 +118,8 @@ case SATURDAY:var = var + 1;
      *
      * @return la prime annuelle de l'employé en Euros et cents
      */
-    //Matricule, performance, date d'embauche, temps partiel, prime
     public Double getPrimeAnnuelle(){
-        //Calcule de la prime d'ancienneté
+        //Calcule de la prime d'anciennetée
         Double primeAnciennete = Entreprise.PRIME_ANCIENNETE * this.getNombreAnneeAnciennete();
         Double prime;
         //Prime du manager (matricule commençant par M) : Prime annuelle de base multipliée par l'indice prime manager
@@ -107,11 +137,27 @@ case SATURDAY:var = var + 1;
             prime = Entreprise.primeAnnuelleBase() * (this.performance + Entreprise.INDICE_PRIME_BASE) + primeAnciennete;
         }
         //Au pro rata du temps partiel.
-        return Math.round(prime * this.tempsPartiel * 100)/100.0;
+        return Math.round(prime * this.tempsPartiel * 100)/100d;
     }
 
-    //Augmenter salaire
-    //public void augmenterSalaire(double pourcentage){}
+    /**
+     * Méthode permettant d'augmenter le salaire d'un employé (en pourcentage)
+     * - Le salaire doit être différent de null sinon EmployeException
+     * - On doit augmenter le salaire et pas le diminuer sinon EmployeException
+     * @param pourcentage pourcentage de l'augmentation de l'employé
+     * @throws EmployeException
+     */
+    public void augmenterSalaire(double pourcentage)throws EmployeException {
+        if(this.salaire == null){
+            throw new EmployeException("Le salaire doit être différent de null !");
+        }
+
+        if(pourcentage <= 0){
+            throw new EmployeException("Augmente le salaire, ne le diminue pas !");
+        }
+
+        this.salaire = Math.round(this.salaire) * (1 + pourcentage / 100);
+    }
 
     public Long getId() {
         return id;
@@ -182,7 +228,7 @@ case SATURDAY:var = var + 1;
      * @return the salaire
      */
     public Double getSalaire() {
-        return salaire;
+        return Math.round(salaire * 100.0) / 100.0;
     }
 
     /**
