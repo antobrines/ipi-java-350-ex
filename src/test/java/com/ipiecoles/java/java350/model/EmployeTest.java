@@ -124,22 +124,6 @@ class EmployeTest {
         Assertions.assertThat(nbAnnees).isNull();
     }
 
-    @Test
-    void testPrimeAnnuelleUnitaire() {
-        //Given
-        Employe employe = new Employe();
-        employe.setMatricule("C12345");
-        employe.setTempsPartiel(1d);
-        employe.setDateEmbauche(LocalDate.now());
-        employe.setPerformance(Entreprise.PERFORMANCE_BASE);
-
-        //When
-        Double prime = employe.getPrimeAnnuelle();
-
-        //Then
-        Assertions.assertThat(prime).isEqualTo(1000d);
-    }
-
     @ParameterizedTest
     @CsvSource({
             "'C12345', 1.0, 0, 1, 1000.0",
