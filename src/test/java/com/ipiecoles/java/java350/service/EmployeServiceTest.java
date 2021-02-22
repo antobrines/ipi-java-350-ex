@@ -74,10 +74,10 @@ class EmployeServiceTest {
         String prenom = "John";
         Poste poste = Poste.MANAGER;
         NiveauEtude niveauEtude = NiveauEtude.LICENCE;
-        Double tempsPartiel = 1.0;
+
 
         //When
-        employeService.embaucheEmploye(nom, prenom, poste, niveauEtude, tempsPartiel);
+        employeService.embaucheEmploye(nom, prenom, poste, niveauEtude, null);
 
         //Then 
         ArgumentCaptor<Employe> employeArgumentCaptor = ArgumentCaptor.forClass(Employe.class);
@@ -87,7 +87,7 @@ class EmployeServiceTest {
         Assertions.assertThat(employe.getNom()).isEqualTo(nom);
         Assertions.assertThat(employe.getPrenom()).isEqualTo(prenom);
         Assertions.assertThat(employe.getMatricule()).isEqualTo("M45679");
-        Assertions.assertThat(employe.getTempsPartiel()).isEqualTo(tempsPartiel);
+        Assertions.assertThat(employe.getTempsPartiel()).isEqualTo(null);
         Assertions.assertThat(employe.getPerformance()).isEqualTo(Entreprise.PERFORMANCE_BASE);
         Assertions.assertThat(employe.getDateEmbauche()).isEqualTo(LocalDate.now());
         //1521.22 * 1.2 * 1.0 = 1825.46

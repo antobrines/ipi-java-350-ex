@@ -228,7 +228,7 @@ public class Employe {
      * @return the salaire
      */
     public Double getSalaire() {
-        return salaire;
+        return Math.round(salaire * 100.0) / 100.0;
     }
 
     /**
