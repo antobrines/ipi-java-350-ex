@@ -152,7 +152,7 @@ public class Employe {
             throw new EmployeException("Le salaire doit être différent de null !");
         }
 
-        if(pourcentage < 0){
+        if(pourcentage <= 0){
             throw new EmployeException("Augmente le salaire, ne le diminue pas !");
         }
 

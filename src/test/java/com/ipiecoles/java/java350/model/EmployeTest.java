@@ -60,10 +60,10 @@ class EmployeTest {
             "'2032-01-01', 0.25, 2",
             "'2044-01-01', 1, 9",
     })
-    void testNbRTT(LocalDate date, Double tmpsActivité, Integer nbDeRTTAttendu) {
+    void testNbRTT(LocalDate date, Double tmpsActivite, Integer nbDeRTTAttendu) {
         //Given
         Employe employe = new Employe("Cena", "John", "M12345", LocalDate.now(), 1400d, 1, 1d);
-        employe.setTempsPartiel(tmpsActivité);
+        employe.setTempsPartiel(tmpsActivite);
 
         //When
         Integer nbRtt = employe.getNbRtt(date);
