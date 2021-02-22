@@ -49,16 +49,18 @@ class EmployeTest {
 
     @ParameterizedTest
     @CsvSource({
-            "'2019-01-01', 8",
-            "'2020-01-01', 10",
-            "'2021-01-01', 10",
-            "'2022-01-01', 10",
-            "'2032-01-01', 11"
+            "'2019-01-01', 1, 8",
+            "'2019-01-01', 0.5, 4",
+            "'2020-01-01', 1, 10",
+            "'2021-01-01', 1, 10",
+            "'2022-01-01', 1, 10",
+            "'2032-01-01', 1, 11",
+            "'2044-01-01', 1, 9",
     })
-    void testNbRTT(LocalDate date, Integer nbDeRTTAttendu) {
+    void testNbRTT(LocalDate date, Double tmpsActivité, Integer nbDeRTTAttendu) {
         //Given
         Employe employe = new Employe("Cena", "John", "M12345", LocalDate.now(), 1400d, 1, 1d);
-
+        employe.setTempsPartiel(tmpsActivité);
         //When
         Integer nbRtt = employe.getNbRtt(date);
 
