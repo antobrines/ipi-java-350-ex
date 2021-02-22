@@ -87,7 +87,7 @@ class EmployeServiceTest {
         Assertions.assertThat(employe.getNom()).isEqualTo(nom);
         Assertions.assertThat(employe.getPrenom()).isEqualTo(prenom);
         Assertions.assertThat(employe.getMatricule()).isEqualTo("M45679");
-        Assertions.assertThat(employe.getTempsPartiel()).isEqualTo(null);
+        Assertions.assertThat(employe.getTempsPartiel()).isNull();
         Assertions.assertThat(employe.getPerformance()).isEqualTo(Entreprise.PERFORMANCE_BASE);
         Assertions.assertThat(employe.getDateEmbauche()).isEqualTo(LocalDate.now());
         //1521.22 * 1.2 * 1.0 = 1825.46
@@ -138,9 +138,9 @@ class EmployeServiceTest {
     @CsvSource({
             " 0 , 1 ",
             " 850 , 1 ",
-            " 1050 , 1 ",
-            " 1051 , 3 ",
-            " 1201 , 6 ",
+            " 1000 , 1 ",
+            " 1200 , 3 ",
+            " 1500 , 6 "
     })
     void testCalculPerformanceCommercial(Long chiffreAffaire, Integer performanceAttendu) throws EmployeException {
         //Given
